@@ -94,15 +94,3 @@ class CarbonNanotube(AtomCluster):
                 # Delete overlapping atoms from the cluster
                 if np.any(delete_mask):
                     cluster.delete_atoms(delete_mask)
-
-    def delete_atoms_in_region(self, axis: int, min_val: float, max_val: float) -> None:
-        """
-        Delete atoms within a specified range along a given axis.
-        
-        Args:
-            axis: 0 for x, 1 for y, 2 for z
-            min_val: minimum coordinate value
-            max_val: maximum coordinate value
-        """
-        mask = (self.positions[:, axis] >= min_val) & (self.positions[:, axis] <= max_val)
-        self.delete_atoms(mask) 

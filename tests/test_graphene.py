@@ -22,9 +22,15 @@ class TestGraphene(unittest.TestCase):
     def test_create_sheet(self):
         # 测试不同尺寸的石墨烯片
         test_cases = [
-            {"nx": 10, "ny": 10, "name": "small_sheet"},
-            {"nx": 20, "ny": 20, "name": "medium_sheet"},
-            {"nx": 30, "ny": 30, "name": "large_sheet"}
+            {"nx": 2, "ny": 2, "name": "2"},
+            {"nx": 3, "ny": 3, "name": "3"},
+            {"nx": 4, "ny": 4, "name": "4"},
+            {"nx": 5, "ny": 5, "name": "5"},
+            {"nx": 6, "ny": 6, "name": "6"},
+            {"nx": 7, "ny": 7, "name": "7"},
+            {"nx": 8, "ny": 8, "name": "8"},
+            {"nx": 9, "ny": 9, "name": "9"},
+            {"nx": 10, "ny": 10, "name": "10"},
         ]
         
         for case in test_cases:
@@ -33,6 +39,8 @@ class TestGraphene(unittest.TestCase):
             
             # 使用石墨烯创建 Box
             box = Box.init_from_graphene(sheet, vacuum=20.0)
+            # box = Box(box_size=(100, 100, 100))
+            # box.add_cluster(sheet)
             
             # 使用 Box 创建 LAMMPSWriter
             writer = LAMMPSWriter(box)

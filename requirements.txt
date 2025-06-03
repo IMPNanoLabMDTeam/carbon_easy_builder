@@ -1,0 +1,2 @@
+-e file:///Users/amphilagusgu/workspace/carbon_easy_builder
+numpy==2.2.6
