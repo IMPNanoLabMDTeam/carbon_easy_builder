@@ -27,7 +27,7 @@ class LAMMPSWriter:
             
         # Get all positions and atom IDs from the box
         all_positions = self.box.get_all_positions()
-        all_atom_ids = self.box.get_all_atom_ids()
+        all_atom_ids = np.arange(1,len(all_positions)+1,dtype=int)
         total_atoms = len(all_positions)
         
         # Box boundaries
@@ -53,9 +53,9 @@ class LAMMPSWriter:
             f.write(f"{zlo} {zhi} zlo zhi\n\n")
             
             # Atoms section
-            f.write("Atoms\n\n")
+            f.write("Atoms # full\n\n")
             
             # Write atom data
             for atom_id, pos in zip(all_atom_ids, all_positions):
-                f.write(f"{atom_id} 1 {pos[0]} {pos[1]} {pos[2]}\n")
+                f.write(f"{atom_id} 1 1 0.0 {pos[0]} {pos[1]} {pos[2]}\n")
                 

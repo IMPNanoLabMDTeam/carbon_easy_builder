@@ -41,3 +41,28 @@ class Graphene(AtomCluster):
         atom_ids = list(range(1, len(positions) + 1))
         
         super().__init__(positions, atom_ids)
+    
+    def dig_hole(self, hole_center, radius):
+        """
+        Remove all atoms within a circular hole.
+        
+        Args:
+            hole_center: array-like, coordinates of the hole center [x, y, z]
+            radius: float, radius of the hole in Angstroms
+        """
+        hole_center = np.array(hole_center)
+        
+        # Calculate distances from each atom to the hole center
+        distances = np.linalg.norm(self.positions - hole_center, axis=1)
+        
+        # Create mask for atoms to delete (distance <= radius)
+        delete_mask = distances <= radius
+        
+        # Count atoms to be removed before deletion
+        num_removed = np.sum(delete_mask)
+        
+        # Use parent class method to delete atoms
+        self.delete_atoms(delete_mask)
+        
+        print(f"Removed {num_removed} atoms within radius {radius} Å of center {hole_center}")
+        print(f"Remaining atoms: {len(self.atom_ids)}")

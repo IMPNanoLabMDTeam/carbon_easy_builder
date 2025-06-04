@@ -1,5 +1,6 @@
 import unittest
 import os
+import numpy as np
 from carbon_easy_builder.graphene import Graphene
 from carbon_easy_builder.lammps_writer import LAMMPSWriter
 from carbon_easy_builder.box import Box
@@ -54,6 +55,54 @@ class TestGraphene(unittest.TestCase):
             print(f"Output file: {output_file}")
             print(f"Please visually inspect the generated data file for correctness")
             print(f"Expected dimensions: nx={case['nx']}, ny={case['ny']}\n")
+
+    def test_graphene_initialization(self):
+        graphene = Graphene(nx=2, ny=2)
+        self.assertEqual(len(graphene.positions), 16)  # 2*2*2*2 = 16 atoms
+        self.assertEqual(len(graphene.atom_ids), 16)
+
+    def test_graphene_structure(self):
+        graphene = Graphene(nx=1, ny=1)
+        self.assertEqual(len(graphene.positions), 4)  # 1*1*2*2 = 4 atoms
+        
+        # Check that all atoms are at z=0 (2D structure)
+        z_coords = graphene.positions[:, 2]
+        np.testing.assert_array_almost_equal(z_coords, np.zeros(4))
+
+    def test_dig_hole_basic(self):
+        """测试基本的dig_hole功能"""
+        graphene = Graphene(nx=3, ny=3)
+        initial_count = len(graphene.atom_ids)
+        
+        # 在中心挖一个小洞
+        center = np.mean(graphene.positions, axis=0)
+        graphene.dig_hole(center, radius=1.0)
+        
+        # 应该移除了一些原子
+        self.assertLess(len(graphene.atom_ids), initial_count)
+        self.assertEqual(len(graphene.positions), len(graphene.atom_ids))
+    
+    def test_dig_hole_no_atoms_removed(self):
+        """测试当洞的半径很小时不应该移除原子"""
+        graphene = Graphene(nx=2, ny=2)
+        initial_count = len(graphene.atom_ids)
+        
+        # 使用一个远离所有原子的位置和很小的半径
+        center = [1000, 1000, 0]  # 远离石墨烯的位置
+        graphene.dig_hole(center, radius=0.1)
+        
+        self.assertEqual(len(graphene.atom_ids), initial_count)
+    
+    def test_dig_hole_remove_all(self):
+        """测试当洞的半径很大时应该移除所有原子"""
+        graphene = Graphene(nx=2, ny=2)
+        
+        # 使用很大的半径，应该移除所有原子
+        center = np.mean(graphene.positions, axis=0)
+        graphene.dig_hole(center, radius=100.0)
+        
+        self.assertEqual(len(graphene.atom_ids), 0)
+        self.assertEqual(len(graphene.positions), 0)
 
     def tearDown(self):
         # 测试结束后可以在这里添加清理代码
